@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
 
@@ -9,15 +10,34 @@ namespace SkolaProjekt.Controllers
 {
     public class DjelatnikController : Controller
     {
-        // GET: Djelatnik
-        public ActionResult Index()
+        SkolaDBContext db = new SkolaDBContext();
+        public ActionResult Create()
         {
+            ListaSkoli();
             return View();
         }
 
-        public ActionResult Create()
+        [HttpPost]
+        public ActionResult Create(Djelatnik djelatnik)
         {
-            SkolaDBContext db = new SkolaDBContext();
+            if (ModelState.IsValid)
+            {
+                db.Djelatniks.Add(djelatnik);
+                db.SaveChanges();
+                return RedirectToAction("Index", "Home");
+            }
+            return View(djelatnik);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            Djelatnik djelatnik = db.Djelatniks.Single(x => x.ID == id);
+            ListaSkoli();
+            return View(djelatnik);
+        }
+
+        private void ListaSkoli()
+        {
             List<SelectListItem> skole = new List<SelectListItem>();
 
             foreach (Skola s in db.Skolas.ToList())
@@ -28,20 +48,34 @@ namespace SkolaProjekt.Controllers
                 skole.Add(selectListItem);
             }
             ViewData["SkolaID"] = skole;
-            return View();
         }
 
         [HttpPost]
-        public ActionResult Create(Djelatnik djelatnik)
+        public ActionResult Edit(Djelatnik djelatnik)
         {
-            SkolaDBContext db = new SkolaDBContext();
+            
             if (ModelState.IsValid)
             {
-                db.Djelatniks.Add(djelatnik);
+                db.Entry(djelatnik).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
+            return View();
+        }
+
+        public ActionResult Delete(int id)
+        {
+            Djelatnik djelatnik = db.Djelatniks.Single(x => x.ID == id);
             return View(djelatnik);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteConfirm(int id)
+        {
+            Djelatnik djelatnik = db.Djelatniks.Single(x => x.ID == id);
+            db.Djelatniks.Remove(djelatnik);
+            db.SaveChanges();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

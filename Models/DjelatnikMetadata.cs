@@ -23,7 +23,7 @@ namespace SkolaProjekt.Models
 
         [Display(Name = "Datum rođenja")]
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString ="{0:dd-MM-yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString ="{0:yyyy-MM-dd}", NullDisplayText = "")]
         public DateTime? DatumRodenja { get; set; }
 
         [Required(ErrorMessage = "Odaberite školu!")]
