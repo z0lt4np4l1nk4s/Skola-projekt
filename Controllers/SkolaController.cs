@@ -9,6 +9,18 @@ namespace SkolaProjekt.Controllers
 {
     public class SkolaController : Controller
     {
+        SkolaDBContext db = new SkolaDBContext();
+        public ActionResult Index(string search)
+        {
+            ViewBag.SviDjelatnici = db.Djelatnik.ToList();
+            ViewBag.SelectedDjelatnici = db.DjelatnikSkola.ToList();
+            var s = db.Skola.AsQueryable();
+            if (!string.IsNullOrEmpty(search))
+            {
+                s = s.Where(x => x.Naziv.StartsWith(search) || x.Mjesto.StartsWith(search));
+            }
+            return View(s.ToList());
+        }
         public ActionResult Create()
         {
             return View();
@@ -19,7 +31,6 @@ namespace SkolaProjekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                SkolaDBContext db = new SkolaDBContext();
                 db.Skola.Add(skola);
                 db.SaveChanges();
                 return RedirectToAction("Index", "Home");

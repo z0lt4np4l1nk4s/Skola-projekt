@@ -3,13 +3,17 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Index</h2>
-
+<br />
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Dodaj novog djelatnika", "Create")
 </p>
-<table class="table">
+@using (Html.BeginForm())
+{
+    @Html.TextBox("search")
+    <input type="submit" value="Pretraži" />
+}
+<br />
+<table class="table" border="1" align="center" style="text-align:center">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Ime)
@@ -23,29 +27,46 @@
         <th>
             @Html.DisplayNameFor(model => model.Zanimanje)
         </th>
-        <th></th>
+        <th>Škola</th>
+        <th>Actions</th>
     </tr>
+    @if (Model.Count() == 0)
+    {
+        <tr>
+            <td colspan="6">
+                <text>
+                    Nema rezultata
+                </text>
+            </td>
+        </tr>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prezime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mjesto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Zanimanje)
+                </td>
+                <td>
+                    @Html.Partial("_DeleteSkoleNames")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Ime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Prezime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Mjesto)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Zanimanje)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
+            </tr>
+        }
+    }
 
 </table>

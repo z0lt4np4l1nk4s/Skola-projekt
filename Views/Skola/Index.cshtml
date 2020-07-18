@@ -1,0 +1,81 @@
+﻿@model IEnumerable<SkolaProjekt.Models.Skola>
+<br />
+<p>
+    @Html.ActionLink("Dodaj novu školu", "Create")
+</p>
+@using (Html.BeginForm())
+{
+    @Html.TextBox("search")
+    <input type="submit" value="Pretraži" />
+}
+<br />
+<table class="table" border="1" align="center" style="text-align:center">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Naziv)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mjesto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Adresa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.WebStranica)
+        </th>
+        <th>Djelatnici</th>
+        <th>Action</th>
+    </tr>
+
+    @if (Model.Count() == 0)
+    {
+        <tr>
+            <td colspan="6">
+                <text>Nema rezultata</text>
+            </td>
+        </tr>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Naziv)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mjesto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adresa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WebStranica)
+                </td>
+                <td>
+                    @foreach (var i in ViewBag.SviDjelatnici)
+                    {
+                        foreach (var v in ViewBag.SelectedDjelatnici)
+                        {
+                            if (item.ID == v.IDSkola)
+                            {
+                                <text>
+                                    @i.Ime
+                                    @i.Prezime
+                                    <br />
+                                </text>
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    }
+
+
+</table>

@@ -14,6 +14,18 @@ namespace SkolaProjekt.Controllers
     {
         private SkolaDBContext db = new SkolaDBContext();
         // GET: Djelatniks/Create
+        public ActionResult Index(string search)
+        {
+            ViewBag.Skole = db.Skola;
+            ViewBag.SelectedSkole = db.DjelatnikSkola.ToList();
+            var c = db.Djelatnik.AsQueryable();
+            if (!string.IsNullOrEmpty(search))
+            {
+                c = c.Where(x => x.Ime.StartsWith(search) || x.Prezime.StartsWith(search) || x.Mjesto.StartsWith(search));
+            }
+            return View(c.ToList());
+        }
+
         public ActionResult Create()
         {
             ViewBag.Skole = db.Skola;
@@ -40,7 +52,6 @@ namespace SkolaProjekt.Controllers
                     db.DjelatnikSkola.Add(djelatnikSkola);
                 }
                 db.SaveChanges();
-                ViewBag.Skole.Count();
                 return RedirectToAction("Index", "Home");
             }
 
@@ -60,7 +71,7 @@ namespace SkolaProjekt.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.SelectedSkole = db.DjelatnikSkola.ToList();
+            ViewBag.SelectedSkole = db.DjelatnikSkola;
             return View(djelatnik);
         }
 
