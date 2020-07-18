@@ -1,0 +1,12 @@
+﻿@foreach (var item in ViewBag.Skole)
+{
+    foreach (var v in ViewBag.SelectedSkole)
+    {
+        if (item.ID == v.IDSkola)
+        {
+            @item.Naziv
+            <br />
+        }
+    }
+
+}

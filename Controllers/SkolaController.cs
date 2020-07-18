@@ -9,12 +9,6 @@ namespace SkolaProjekt.Controllers
 {
     public class SkolaController : Controller
     {
-        // GET: Skola
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         public ActionResult Create()
         {
             return View();
@@ -23,15 +17,14 @@ namespace SkolaProjekt.Controllers
         [HttpPost]
         public ActionResult Create(Skola skola)
         {
-            SkolaDBContext db = new SkolaDBContext();
             if (ModelState.IsValid)
             {
-
-                db.Skolas.Add(skola);
+                SkolaDBContext db = new SkolaDBContext();
+                db.Skola.Add(skola);
                 db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
-            return View(skola);
+            return View();
         }
     }
 }

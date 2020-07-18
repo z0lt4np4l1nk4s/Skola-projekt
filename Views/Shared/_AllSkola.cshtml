@@ -1,0 +1,4 @@
+﻿@foreach (var item in ViewBag.Skole)
+{
+    <li> <input type="checkbox" name="SkolaID" value="@item.ID" /> @item.Naziv</li>
+}
