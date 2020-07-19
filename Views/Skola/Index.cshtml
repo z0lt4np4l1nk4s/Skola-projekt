@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<SkolaProjekt.Models.Skola>
 <br />
-<p>
-    @Html.ActionLink("Dodaj novu školu", "Create")
-</p>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        @Html.ActionLink("Dodaj novu školu", "Create")
+    </p>
+}
 @using (Html.BeginForm())
 {
     @Html.TextBox("search")
@@ -24,7 +27,10 @@
             @Html.DisplayNameFor(model => model.WebStranica)
         </th>
         <th>Djelatnici</th>
-        <th>Action</th>
+        @if (User.IsInRole("Admin"))
+        {
+            <th>Action</th>
+        }
     </tr>
 
     @if (Model.Count() == 0)
@@ -69,10 +75,13 @@
                         }
                     }
                 </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-                </td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    </td>
+                }
             </tr>
         }
     }

@@ -6,11 +6,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SkolaProjekt.Models
 {
-    public class Djelatnik
+    public partial class Djelatnik
     {
         [Key]
         public int ID { get; set; }
+        [Required]
         public string Ime { get; set; }
+        [Required]
         public string Prezime { get; set; }
         public string Mjesto { get; set; }
         public string Zanimanje { get; set; }

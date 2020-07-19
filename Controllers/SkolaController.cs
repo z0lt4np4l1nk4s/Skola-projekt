@@ -7,13 +7,14 @@ using System.Web.Mvc;
 
 namespace SkolaProjekt.Controllers
 {
+    [Authorize]
     public class SkolaController : Controller
     {
         SkolaDBContext db = new SkolaDBContext();
         public ActionResult Index(string search)
         {
-            ViewBag.SviDjelatnici = db.Djelatnik.ToList();
-            ViewBag.SelectedDjelatnici = db.DjelatnikSkola.ToList();
+            ViewBag.SviDjelatnici = db.Djelatnik;
+            ViewBag.SelectedDjelatnici = db.DjelatnikSkola;
             var s = db.Skola.AsQueryable();
             if (!string.IsNullOrEmpty(search))
             {
@@ -21,6 +22,7 @@ namespace SkolaProjekt.Controllers
             }
             return View(s.ToList());
         }
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -33,7 +35,7 @@ namespace SkolaProjekt.Controllers
             {
                 db.Skola.Add(skola);
                 db.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
             return View();
         }

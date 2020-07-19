@@ -12,7 +12,7 @@ namespace SkolaProjekt.Models
     }
     public class SkolaMetadata
     {
-        [Display(Name = "Web stranica")]
+        [Display(Name ="Web stranica")]
         public string WebStranica { get; set; }
     }
 }

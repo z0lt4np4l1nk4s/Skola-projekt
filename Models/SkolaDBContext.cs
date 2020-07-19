@@ -11,5 +11,7 @@ namespace SkolaProjekt.Models
         public DbSet<Djelatnik> Djelatnik { get; set; }
         public DbSet<DjelatnikSkola> DjelatnikSkola { get; set; }
         public DbSet<Skola> Skola { get; set; }
+        public DbSet<Membership> Membership { get; set; }
+        public DbSet<MembershipRole> MembershipRole { get; set; }
     }
 }

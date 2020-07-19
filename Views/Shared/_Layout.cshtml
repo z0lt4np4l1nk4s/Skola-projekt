@@ -21,10 +21,17 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Početna", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Škole", "Index", "Skola")</li>
+                    <li>@Html.ActionLink("Djelatnici", "Index", "Djelatniks")</li>
                 </ul>
             </div>
         </div>
     </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p style="float:right; color:black"><b>Prijavljeni ste kao @User.Identity.Name</b> @Html.ActionLink("Odjava", "Logout", "User")</p>
+    }
 
     <div class="container body-content">
         @RenderBody()

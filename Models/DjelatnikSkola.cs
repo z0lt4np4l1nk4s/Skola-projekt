@@ -6,7 +6,7 @@ using System.Web;
 
 namespace SkolaProjekt.Models
 {
-    public class DjelatnikSkola
+    public partial class DjelatnikSkola
     {
         [Key]
         public int ID { get; set; }

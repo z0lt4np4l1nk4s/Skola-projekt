@@ -6,13 +6,16 @@ using System.Web;
 
 namespace SkolaProjekt.Models
 {
-    public class Skola
+    public partial class Skola
     {
         [Key]
         public int ID { get; set; }
+        [Required]
         public string Naziv { get; set; }
+        [Required]
         public string Mjesto { get; set; }
         public string Adresa { get; set; }
+        [Display(Name ="Web stranica")]
         public string WebStranica { get; set; }
 
         public virtual ICollection<DjelatnikSkola> DjelatnikSkola { get; set; }

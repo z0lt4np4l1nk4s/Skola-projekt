@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkolaProjekt.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,6 +10,8 @@ namespace SkolaProjekt.Controllers
     public class HomeController : Controller
     {
         // GET: Home
+        SkolaDBContext db = new SkolaDBContext();
+        [Authorize]
         public ActionResult Index()
         {
             return View();

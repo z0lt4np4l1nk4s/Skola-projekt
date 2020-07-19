@@ -10,6 +10,7 @@ using SkolaProjekt.Models;
 
 namespace SkolaProjekt.Controllers
 {
+    [Authorize]
     public class DjelatniksController : Controller
     {
         private SkolaDBContext db = new SkolaDBContext();
@@ -17,7 +18,7 @@ namespace SkolaProjekt.Controllers
         public ActionResult Index(string search)
         {
             ViewBag.Skole = db.Skola;
-            ViewBag.SelectedSkole = db.DjelatnikSkola.ToList();
+            ViewBag.SelectedSkole = db.DjelatnikSkola;
             var c = db.Djelatnik.AsQueryable();
             if (!string.IsNullOrEmpty(search))
             {
@@ -26,6 +27,7 @@ namespace SkolaProjekt.Controllers
             return View(c.ToList());
         }
 
+        [Authorize(Roles ="Admin")]
         public ActionResult Create()
         {
             ViewBag.Skole = db.Skola;
@@ -52,12 +54,13 @@ namespace SkolaProjekt.Controllers
                     db.DjelatnikSkola.Add(djelatnikSkola);
                 }
                 db.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
 
             return View(djelatnik);
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Djelatniks/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -100,11 +103,12 @@ namespace SkolaProjekt.Controllers
                 }
                 db.Entry(djelatnik).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
             return View(djelatnik);
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Djelatniks/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -137,7 +141,7 @@ namespace SkolaProjekt.Controllers
             }
             db.Djelatnik.Remove(djelatnik);
             db.SaveChanges();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
