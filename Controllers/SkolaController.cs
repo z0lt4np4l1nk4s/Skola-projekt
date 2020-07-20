@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace SkolaProjekt.Controllers
+namespace SkolaProject.Controllers
 {
     [Authorize]
     public class SkolaController : Controller
@@ -18,7 +18,7 @@ namespace SkolaProjekt.Controllers
             var s = db.Skola.AsQueryable();
             if (!string.IsNullOrEmpty(search))
             {
-                s = s.Where(x => x.Naziv.StartsWith(search) || x.Mjesto.StartsWith(search));
+                s = s.Where(x => x.Naziv.ToLower().StartsWith(search.ToLower()) || x.Mjesto.ToLower().StartsWith(search.ToLower()));
             }
             return View(s.ToList());
         }

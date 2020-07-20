@@ -1,81 +1,156 @@
-﻿using SkolaProjekt.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using SkolaProjekt.Models;
 
-namespace SkolaProjekt.Controllers
+namespace SkolaProject.Controllers
 {
+    [Authorize]
     public class DjelatnikController : Controller
     {
-        SkolaDBContext db = new SkolaDBContext();
+        private SkolaDBContext db = new SkolaDBContext();
+        // GET: Djelatniks/Create
+        public ActionResult Index(string search)
+        {
+            ViewBag.Skole = db.Skola;
+            ViewBag.SelectedSkole = db.DjelatnikSkola;
+            var c = db.Djelatnik.AsQueryable();
+            if (!string.IsNullOrEmpty(search))
+            {
+                c = c.Where(x => x.Ime.ToLower().StartsWith(search.ToLower()) || x.Prezime.ToLower().StartsWith(search.ToLower()) || x.Mjesto.ToLower().StartsWith(search.ToLower()));
+            }
+            return View(c.ToList());
+        }
+
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
-            ListaSkoli();
+            ViewBag.Skole = db.Skola;
             return View();
         }
 
+        // POST: Djelatniks/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create(Djelatnik djelatnik)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "ID,Ime,Prezime,Mjesto,Zanimanje")] Djelatnik djelatnik, int[] SkolaID)
         {
             if (ModelState.IsValid)
             {
-                db.Djelatniks.Add(djelatnik);
+                db.Djelatnik.Add(djelatnik);
                 db.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                Djelatnik dj = db.Djelatnik.Single(x => x.Ime == djelatnik.Ime && x.Prezime == djelatnik.Prezime && x.Mjesto == djelatnik.Mjesto && x.Zanimanje == djelatnik.Zanimanje);
+                foreach (int i in SkolaID)
+                {
+                    DjelatnikSkola djelatnikSkola = new DjelatnikSkola();
+                    djelatnikSkola.IDDjelatnik = dj.ID;
+                    djelatnikSkola.IDSkola = i;
+                    db.DjelatnikSkola.Add(djelatnikSkola);
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
+
             return View(djelatnik);
         }
 
-        public ActionResult Edit(int id)
+        [Authorize(Roles = "Admin")]
+        // GET: Djelatniks/Edit/5
+        public ActionResult Edit(int? id)
         {
-            Djelatnik djelatnik = db.Djelatniks.Single(x => x.ID == id);
-            ListaSkoli();
-            return View(djelatnik);
-        }
-
-        private void ListaSkoli()
-        {
-            List<SelectListItem> skole = new List<SelectListItem>();
-
-            foreach (Skola s in db.Skolas.ToList())
+            ViewBag.Skole = db.Skola;
+            if (id == null)
             {
-                SelectListItem selectListItem = new SelectListItem();
-                selectListItem.Text = s.Naziv;
-                selectListItem.Value = s.ID.ToString();
-                skole.Add(selectListItem);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewData["SkolaID"] = skole;
+            Djelatnik djelatnik = db.Djelatnik.Single(x => x.ID == id);
+            if (djelatnik == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.SelectedSkole = db.DjelatnikSkola;
+            return View(djelatnik);
         }
 
+        // POST: Djelatniks/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Edit(Djelatnik djelatnik)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "ID,Ime,Prezime,Mjesto,Zanimanje")] Djelatnik djelatnik, int[] SkolaID)
         {
-            
             if (ModelState.IsValid)
             {
-                db.Entry(djelatnik).State = System.Data.Entity.EntityState.Modified;
+                foreach (DjelatnikSkola ds in db.DjelatnikSkola.ToList())
+                {
+                    if (ds.IDDjelatnik == djelatnik.ID)
+                    {
+                        db.DjelatnikSkola.Remove(ds);
+                    }
+                }
+                foreach (int i in SkolaID)
+                {
+                    DjelatnikSkola djelatnikSkola = new DjelatnikSkola();
+                    djelatnikSkola.IDDjelatnik = djelatnik.ID;
+                    djelatnikSkola.IDSkola = i;
+                    db.DjelatnikSkola.Add(djelatnikSkola);
+                }
+                db.Entry(djelatnik).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
-            return View();
-        }
-
-        public ActionResult Delete(int id)
-        {
-            Djelatnik djelatnik = db.Djelatniks.Single(x => x.ID == id);
             return View(djelatnik);
         }
 
-        [HttpPost]
-        public ActionResult DeleteConfirm(int id)
+        [Authorize(Roles = "Admin")]
+        // GET: Djelatniks/Delete/5
+        public ActionResult Delete(int? id)
         {
-            Djelatnik djelatnik = db.Djelatniks.Single(x => x.ID == id);
-            db.Djelatniks.Remove(djelatnik);
+            ViewBag.Skole = db.Skola;
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Djelatnik djelatnik = db.Djelatnik.Find(id);
+            ViewBag.SelectedSkole = db.DjelatnikSkola.ToList().Where(x => x.IDDjelatnik == id);
+            if (djelatnik == null)
+            {
+                return HttpNotFound();
+            }
+            return View(djelatnik);
+        }
+
+        // POST: Djelatniks/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Djelatnik djelatnik = db.Djelatnik.Find(id);
+            foreach (DjelatnikSkola ds in db.DjelatnikSkola.ToList())
+            {
+                if (ds.IDDjelatnik == djelatnik.ID)
+                {
+                    db.DjelatnikSkola.Remove(ds);
+                }
+            }
+            db.Djelatnik.Remove(djelatnik);
             db.SaveChanges();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

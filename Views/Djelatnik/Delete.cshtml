@@ -6,7 +6,7 @@
 
 <h2>Delete</h2>
 
-<h3>Jeste li sigurni da želite izbrisati tog korisnika?</h3>
+<h3>Jeste li sigurni da želite obrisati djelatnika?</h3>
 <div>
     <h4>Djelatnik</h4>
     <hr />
@@ -36,53 +36,28 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Adresa)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Adresa)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.Zanimanje)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.Zanimanje)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.Telefon)
+            Škola
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Telefon)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.DatumRodenja)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.DatumRodenja)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.tblSkola.Naziv)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.tblSkola.Naziv)
+            @Html.Partial("_DeleteSkoleNames")
         </dd>
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index", "Home")
+            @Html.ActionLink("Povratak", "Index")
         </div>
     }
 </div>
