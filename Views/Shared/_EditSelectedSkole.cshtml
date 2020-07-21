@@ -6,11 +6,11 @@
         if (v.IDSkola == item.ID && Model.ID == v.IDDjelatnik)
         {
             found = false;
-            <li> <input type="checkbox" name="SkolaID" value="@item.ID" checked="checked" style="list-style:none" /> @item.Naziv</li>
+            <li style="list-style:none"> <input type="checkbox" name="SkolaID" value="@item.ID" checked="checked"  /> @item.Naziv</li>
         }
     }
     if (found)
     {
-        <li> <input type="checkbox" name="SkolaID" value="@item.ID" style="list-style:none" /> @item.Naziv</li>
+        <li style="list-style:none"> <input type="checkbox" name="SkolaID" value="@item.ID"  /> @item.Naziv</li>
     }
 }
