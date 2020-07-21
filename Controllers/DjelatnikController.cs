@@ -16,15 +16,38 @@ namespace SkolaProject.Controllers
     {
         private SkolaDBContext db = new SkolaDBContext();
         // GET: Djelatniks/Create
-        public ActionResult Index(string search, int? page)
+        public ActionResult Index(string search, string sortBy, int? page)
         {
             ViewBag.Skole = db.Skola;
             ViewBag.SelectedSkole = db.DjelatnikSkola;
+
+            ViewBag.SortIme = sortBy == "Ime" ? "Ime desc" : "Ime";
+            ViewBag.SortPrezime = sortBy == "Prezime" ? "Prezime desc" : "Prezime";
             var c = db.Djelatnik.AsQueryable();
             if (!string.IsNullOrEmpty(search))
             {
                 c = c.Where(x => x.Ime.ToLower().StartsWith(search.ToLower()) || x.Prezime.ToLower().StartsWith(search.ToLower()) || x.Mjesto.ToLower().StartsWith(search.ToLower()));
             }
+
+            switch (sortBy)
+            {
+                case "Ime":
+                    c = c.OrderBy(x => x.Ime);
+                    break;
+                case "Ime desc":
+                    c = c.OrderByDescending(x => x.Ime);
+                    break;
+                case "Prezime":
+                    c = c.OrderBy(x => x.Prezime);
+                    break;
+                case "Prezime desc":
+                    c = c.OrderByDescending(x => x.Prezime);
+                    break;
+                default:
+                    c = c.OrderBy(x => x.ID);
+                    break;
+            }
+
             return View(c.ToList().ToPagedList(page ?? 1, 5));
         }
 

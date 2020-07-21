@@ -20,10 +20,10 @@
 <table class="table" border="1" align="center" style="text-align:center">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Ime)
+            @Html.ActionLink("Ime", "Index", new { sortBy = ViewBag.SortIme, search = Request.QueryString["search"], page = Request.QueryString["page"] })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Prezime)
+            @Html.ActionLink("Prezime", "Index", new { sortBy = ViewBag.SortPrezime, search = Request.QueryString["search"], page = Request.QueryString["page"]})
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().Mjesto)
@@ -80,4 +80,4 @@
     }
 
 </table>
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page, search = Request.QueryString["search"] }), new PagedListRenderOptions {Display = PagedListDisplayMode.IfNeeded})
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, search = Request.QueryString["search"], sortBy = Request.QueryString["sortBy"] }), new PagedListRenderOptions {Display = PagedListDisplayMode.IfNeeded})
