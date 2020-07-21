@@ -2,7 +2,7 @@
 {
     foreach (var v in ViewBag.SelectedSkole)
     {
-        if (item.ID == v.IDSkola)
+        if (item.ID == v.IDSkola && Model.ID == v.IDDjelatnik)
         {
             @item.Naziv
             <br />

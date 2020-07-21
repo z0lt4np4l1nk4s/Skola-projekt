@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
 
 namespace SkolaProject.Controllers
 {
@@ -11,7 +12,7 @@ namespace SkolaProject.Controllers
     public class SkolaController : Controller
     {
         SkolaDBContext db = new SkolaDBContext();
-        public ActionResult Index(string search)
+        public ActionResult Index(string search, int? page)
         {
             ViewBag.SviDjelatnici = db.Djelatnik;
             ViewBag.SelectedDjelatnici = db.DjelatnikSkola;
@@ -20,7 +21,7 @@ namespace SkolaProject.Controllers
             {
                 s = s.Where(x => x.Naziv.ToLower().StartsWith(search.ToLower()) || x.Mjesto.ToLower().StartsWith(search.ToLower()));
             }
-            return View(s.ToList());
+            return View(s.ToList().ToPagedList(page ?? 1, 5));
         }
         [Authorize(Roles = "Admin")]
         public ActionResult Create()

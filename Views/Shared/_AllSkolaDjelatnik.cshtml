@@ -1,0 +1,14 @@
+﻿@foreach (var i in ViewBag.SviDjelatnici)
+{
+    foreach (var v in ViewBag.SelectedDjelatnici)
+    {
+        if (Model.ID == v.IDSkola && i.ID == v.IDDjelatnik)
+        {
+            <text>
+                @i.Ime
+                @i.Prezime
+                <br />
+            </text>
+        }
+    }
+}

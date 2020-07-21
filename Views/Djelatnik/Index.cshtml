@@ -1,5 +1,6 @@
-﻿@model IEnumerable<SkolaProjekt.Models.Djelatnik>
-
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IPagedList<SkolaProjekt.Models.Djelatnik>
 @{
     ViewBag.Title = "Index";
 }
@@ -10,7 +11,7 @@
         @Html.ActionLink("Dodaj novog djelatnika", "Create")
     </p>
 }
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "Djelatnik", FormMethod.Get))
 {
     @Html.TextBox("search")
     <input type="submit" value="Pretraži" />
@@ -19,16 +20,16 @@
 <table class="table" border="1" align="center" style="text-align:center">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Ime)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Ime)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Prezime)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Prezime)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Mjesto)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Mjesto)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Zanimanje)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Zanimanje)
         </th>
         <th>Škola</th>
         @if (User.IsInRole("Admin"))
@@ -64,7 +65,7 @@
                     @Html.DisplayFor(modelItem => item.Zanimanje)
                 </td>
                 <td>
-                    @Html.Partial("_DeleteSkoleNames")
+                    @Html.Partial("_AllDjelatnikSkola", item)
                 </td>
                 @if (User.IsInRole("Admin"))
                 {
@@ -79,3 +80,4 @@
     }
 
 </table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, search = Request.QueryString["search"] }), new PagedListRenderOptions {Display = PagedListDisplayMode.IfNeeded})

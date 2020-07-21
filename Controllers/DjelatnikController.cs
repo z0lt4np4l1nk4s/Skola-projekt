@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SkolaProjekt.Models;
+using PagedList;
 
 namespace SkolaProject.Controllers
 {
@@ -15,7 +16,7 @@ namespace SkolaProject.Controllers
     {
         private SkolaDBContext db = new SkolaDBContext();
         // GET: Djelatniks/Create
-        public ActionResult Index(string search)
+        public ActionResult Index(string search, int? page)
         {
             ViewBag.Skole = db.Skola;
             ViewBag.SelectedSkole = db.DjelatnikSkola;
@@ -24,7 +25,7 @@ namespace SkolaProject.Controllers
             {
                 c = c.Where(x => x.Ime.ToLower().StartsWith(search.ToLower()) || x.Prezime.ToLower().StartsWith(search.ToLower()) || x.Mjesto.ToLower().StartsWith(search.ToLower()));
             }
-            return View(c.ToList());
+            return View(c.ToList().ToPagedList(page ?? 1, 5));
         }
 
         [Authorize(Roles = "Admin")]

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<SkolaProjekt.Models.Skola>
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IPagedList<SkolaProjekt.Models.Skola>
 <br />
 @if (User.IsInRole("Admin"))
 {
@@ -6,7 +8,7 @@
         @Html.ActionLink("Dodaj novu školu", "Create")
     </p>
 }
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "Skola", FormMethod.Get))
 {
     @Html.TextBox("search")
     <input type="submit" value="Pretraži" />
@@ -15,16 +17,16 @@
 <table class="table" border="1" align="center" style="text-align:center">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Naziv)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Naziv)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Mjesto)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Mjesto)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Adresa)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Adresa)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.WebStranica)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().WebStranica)
         </th>
         <th>Djelatnici</th>
         @if (User.IsInRole("Admin"))
@@ -60,20 +62,7 @@
                     @Html.DisplayFor(modelItem => item.WebStranica)
                 </td>
                 <td>
-                    @foreach (var i in ViewBag.SviDjelatnici)
-                    {
-                        foreach (var v in ViewBag.SelectedDjelatnici)
-                        {
-                            if (item.ID == v.IDSkola)
-                            {
-                                <text>
-                                    @i.Ime
-                                    @i.Prezime
-                                    <br />
-                                </text>
-                            }
-                        }
-                    }
+                    @Html.Partial("_AllSkolaDjelatnik", item)
                 </td>
                 @if (User.IsInRole("Admin"))
                 {
