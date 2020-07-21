@@ -23,7 +23,7 @@
             @Html.ActionLink("Ime", "Index", new { sortBy = ViewBag.SortIme, search = Request.QueryString["search"], page = Request.QueryString["page"] })
         </th>
         <th>
-            @Html.ActionLink("Prezime", "Index", new { sortBy = ViewBag.SortPrezime, search = Request.QueryString["search"], page = Request.QueryString["page"]})
+            @Html.ActionLink("Prezime", "Index", new { sortBy = ViewBag.SortPrezime, search = Request.QueryString["search"], page = Request.QueryString["page"] })
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().Mjesto)
@@ -32,10 +32,7 @@
             @Html.DisplayNameFor(model => model.FirstOrDefault().Zanimanje)
         </th>
         <th>Škola</th>
-        @if (User.IsInRole("Admin"))
-        {
-            <th>Actions</th>
-        }
+        <th>Actions</th>
     </tr>
     @if (Model.Count() == 0)
     {
@@ -67,17 +64,22 @@
                 <td>
                     @Html.Partial("_AllDjelatnikSkola", item)
                 </td>
-                @if (User.IsInRole("Admin"))
-                {
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-                    </td>
-                }
+
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID })<text> | </text>
+                    }
+                    @Html.ActionLink("Details", "Details", new { id = item.ID })
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <text> | </text>@Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    }
+                </td>
 
             </tr>
+}
         }
-    }
 
 </table>
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page, search = Request.QueryString["search"], sortBy = Request.QueryString["sortBy"] }), new PagedListRenderOptions {Display = PagedListDisplayMode.IfNeeded})
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, search = Request.QueryString["search"], sortBy = Request.QueryString["sortBy"] }), new PagedListRenderOptions { Display = PagedListDisplayMode.IfNeeded })

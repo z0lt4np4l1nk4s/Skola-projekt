@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using SkolaProjekt.Models;
 using PagedList;
+using System.IO;
+using System.Security.Permissions;
 
 namespace SkolaProject.Controllers
 {
@@ -63,10 +65,17 @@ namespace SkolaProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Ime,Prezime,Mjesto,Zanimanje")] Djelatnik djelatnik, int[] SkolaID)
+        public ActionResult Create([Bind(Include = "ID,Ime,Prezime,Mjesto,Zanimanje,SlikaPath,SlikaFile")] Djelatnik djelatnik, int[] SkolaID)
         {
             if (ModelState.IsValid)
             {
+                if (djelatnik.SlikaFile != null)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(djelatnik.SlikaFile.FileName) + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(djelatnik.SlikaFile.FileName);
+                    djelatnik.SlikaPath = "~/Images/" + fileName;
+                    fileName = Path.Combine(Server.MapPath("~/Images/"), fileName);
+                    djelatnik.SlikaFile.SaveAs(fileName);
+                }
                 db.Djelatnik.Add(djelatnik);
                 db.SaveChanges();
                 Djelatnik dj = db.Djelatnik.Single(x => x.Ime == djelatnik.Ime && x.Prezime == djelatnik.Prezime && x.Mjesto == djelatnik.Mjesto && x.Zanimanje == djelatnik.Zanimanje);
@@ -81,6 +90,22 @@ namespace SkolaProject.Controllers
                 return RedirectToAction("Index");
             }
 
+            return View(djelatnik);
+        }
+
+        public ActionResult Details(int? id)
+        {
+            ViewBag.Skole = db.Skola;
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Djelatnik djelatnik = db.Djelatnik.Single(x => x.ID == id);
+            if (djelatnik == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.SelectedSkole = db.DjelatnikSkola;
             return View(djelatnik);
         }
 
@@ -107,10 +132,25 @@ namespace SkolaProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Ime,Prezime,Mjesto,Zanimanje")] Djelatnik djelatnik, int[] SkolaID)
+        public ActionResult Edit([Bind(Include = "ID,Ime,Prezime,Mjesto,Zanimanje,SlikaPath,SlikaFile")] Djelatnik djelatnik, int[] SkolaID)
         {
             if (ModelState.IsValid)
             {
+                Djelatnik dj = db.Djelatnik.Single(x => x.ID == djelatnik.ID);
+                /*if (djelatnik.SlikaFile != null)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(djelatnik.SlikaFile.FileName) + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(djelatnik.SlikaFile.FileName);
+                    djelatnik.SlikaPath = "~/Images/" + fileName;
+                    fileName = Path.Combine(Server.MapPath("~/Images/"), fileName);
+                    djelatnik.SlikaFile.SaveAs(fileName);
+                }
+                if (dj.SlikaPath != djelatnik.SlikaPath)
+                {
+                    if (System.IO.File.Exists(Request.MapPath(dj.SlikaPath)))
+                    {
+                        System.IO.File.Delete(Request.MapPath(dj.SlikaPath));
+                    }
+                }*/
                 foreach (DjelatnikSkola ds in db.DjelatnikSkola.ToList())
                 {
                     if (ds.IDDjelatnik == djelatnik.ID)
