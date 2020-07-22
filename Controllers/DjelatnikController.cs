@@ -10,6 +10,7 @@ using SkolaProjekt.Models;
 using PagedList;
 using System.IO;
 using System.Security.Permissions;
+using System.Data.Entity.Migrations;
 
 namespace SkolaProject.Controllers
 {
@@ -137,20 +138,22 @@ namespace SkolaProject.Controllers
             if (ModelState.IsValid)
             {
                 Djelatnik dj = db.Djelatnik.Single(x => x.ID == djelatnik.ID);
-                /*if (djelatnik.SlikaFile != null)
+                if (djelatnik.SlikaFile != null)
                 {
                     string fileName = Path.GetFileNameWithoutExtension(djelatnik.SlikaFile.FileName) + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(djelatnik.SlikaFile.FileName);
                     djelatnik.SlikaPath = "~/Images/" + fileName;
                     fileName = Path.Combine(Server.MapPath("~/Images/"), fileName);
                     djelatnik.SlikaFile.SaveAs(fileName);
                 }
-                if (dj.SlikaPath != djelatnik.SlikaPath)
+                else
                 {
-                    if (System.IO.File.Exists(Request.MapPath(dj.SlikaPath)))
-                    {
-                        System.IO.File.Delete(Request.MapPath(dj.SlikaPath));
-                    }
-                }*/
+                    djelatnik.SlikaPath = dj.SlikaPath;
+                }
+                
+                if (System.IO.File.Exists(Request.MapPath(dj.SlikaPath)))
+                {
+                    System.IO.File.Delete(Request.MapPath(dj.SlikaPath));
+                }
                 foreach (DjelatnikSkola ds in db.DjelatnikSkola.ToList())
                 {
                     if (ds.IDDjelatnik == djelatnik.ID)
@@ -165,7 +168,7 @@ namespace SkolaProject.Controllers
                     djelatnikSkola.IDSkola = i;
                     db.DjelatnikSkola.Add(djelatnikSkola);
                 }
-                db.Entry(djelatnik).State = EntityState.Modified;
+                db.Djelatnik.AddOrUpdate(djelatnik);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
